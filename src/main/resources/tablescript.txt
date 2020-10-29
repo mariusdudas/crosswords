@@ -1,0 +1,18 @@
+use crosswords;
+CREATE TABLE if NOT EXISTS games(
+	gameId INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY, 
+	name VARCHAR(30) NOT NULL, 
+	theme VARCHAR(30) NOT NULL, 
+	size VARCHAR(5),
+	description VARCHAR(150) NOT NULL, 
+
+	preference BLOB,
+	image BLOB, 
+	rating VARCHAR(1),
+	complete BOOL,
+
+	letters BLOB, 
+	accessTime TIMESTAMP,
+	solutionsDefinitionsJson VARCHAR(50),
+	solutionsDefinitions Json
+);
