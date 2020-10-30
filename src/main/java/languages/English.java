@@ -538,21 +538,16 @@ public class English implements ILanguages {
 	public String getOpenGameText() {
 		return "Open game";
 	}
+	
+	public String getDeleteGameText() {
+		return "Delete game";
+	}
 
 	@Override
 	public String getNoIncompleteGameText() {
 		return "No incomplete game found";
 	}
 
-	@Override
-	public String getNoIncompleteGameButtonText() {
-		return "Ok";
-	}
-
-	@Override
-	public char getNoIncompleteGameButtonMnemonic() {
-		return 'o';
-	}
 
 	@Override
 	public String getContinueGameText() {

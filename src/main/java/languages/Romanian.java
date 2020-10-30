@@ -537,20 +537,14 @@ public class Romanian implements ILanguages {
 	public String getOpenGameText() {
 		return "Deschide joc";
 	}
+	
+	public String getDeleteGameText() {
+		return "Sterge joc";
+	}
 
 	@Override
 	public String getNoIncompleteGameText() {
 		return "Nu s-au gasit jocuri incomplete";
-	}
-
-	@Override
-	public String getNoIncompleteGameButtonText() {
-		return "Ok";
-	}
-
-	@Override
-	public char getNoIncompleteGameButtonMnemonic() {
-		return 'o';
 	}
 
 	@Override
@@ -602,5 +596,5 @@ public class Romanian implements ILanguages {
 	public String getImageName() {
 		return "Numele imaginii";
 	}
-	
+
 }

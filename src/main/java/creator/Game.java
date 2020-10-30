@@ -5,16 +5,19 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Convert;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Entity(name = "games")
+@Access(AccessType.FIELD)
 public class Game {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +38,8 @@ public class Game {
 	private char[] letters;
 	private Timestamp accessTime;
 	private String solutionsDefinitionsJson;
-	@Convert(converter = ListConverter.class)
+	@Transient
+//	@Convert(converter = ListConverter.class)
 	private List<GameCoreData> solutionsDefinitions = new ArrayList<GameCoreData>();
 	
 	public void serializeSolutionsDefinitions() throws JsonProcessingException {
@@ -81,7 +85,6 @@ public class Game {
 		letters = new char[length];
 		preference = Workbench.getActualPreference();
 		size = preference.getWidth() + "X" + preference.getHeight();
-		System.out.println(size);
 	}
 
 	public void setLetter(int index, char letter) {
@@ -142,6 +145,14 @@ public class Game {
 
 	public boolean isComplete() {
 		return complete;
+	}
+	
+	public char[] getLetters() {
+		return letters;
+	}
+	
+	public String getSolutionsDefinitionsJSON() {
+		return solutionsDefinitionsJson;
 	}
 
 	public Timestamp getAccessTime() {

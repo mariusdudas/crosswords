@@ -69,39 +69,12 @@ public class Editor extends JPanel {
 				keyChar = ke.getKeyChar();
 
 				if (!pressed) {
-//					if (keyChar == 8) {
-					
-//						if (Workbench.getCharIndex() > 0) {
-//							Workbench.setCharIndex(Workbench.getCharIndex() - 1);
-//							for (int i = solutionField.getCaretPosition(); i < Workbench.getSelectedSquaresNumber() - 1; i++) {
-//								Workbench.getSquares()[Workbench.getSelection()[i - 1]]
-//										.setLetter(Workbench.getSquares()[Workbench.getSelection()[i]].getLetter());
-//								System.out.println("caretPos: " + i);
-//							}
-//							Workbench.getSquares()[Workbench.getSelection()[text.length() - 1]].setLetter((char) 0);
-//							text = text.substring(0, text.length() > 0 ? text.length() - 1 : 0);
-//						}
 
 					if (keyChar == 10 || keyChar == 9){
 						if (solutionField.getText().strip() != "" )
 							definitionArea.grabFocus();
 					} 
 					else if (Character.isAlphabetic(keyChar)) {
-//
-//						System.out.println(text + " length: " + solutionField.getText().length() + " charIndex: "
-//								+ Workbench.getCharIndex());
-//						if (Workbench.getCharIndex() <= Workbench.getSelectedSquaresNumber()
-//								&& text.length() <= Workbench.getSelectedSquaresNumber()) {
-//							text += String.valueOf(keyChar);
-//							Workbench.getSquares()[!Workbench.isMultiple() ? Workbench.getSelection()[0]
-//									: Workbench.getSelection()[Workbench.getCharIndex()]].setLetter(keyChar);
-//							Workbench.setCharIndex(Workbench.getCharIndex() + 1);
-//						}
-//						text = "";
-//						solutionField.setText("");
-//						solutionField.setText(text);
-//					}
-					
 					
 				}
 					Workbench.getDrawArea().repaint();

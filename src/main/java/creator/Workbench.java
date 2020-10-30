@@ -63,6 +63,7 @@ import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.MaskFormatter;
 
@@ -71,8 +72,9 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 //import org.json.simple.*;
+import org.hibernate.query.Query;
 
-import com.mysql.cj.xdevapi.JsonArray;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import languages.English;
 import languages.ILanguages;
@@ -173,7 +175,7 @@ public class Workbench extends JPanel {
 	private static MaskFormatter maskFormatter;
 	private static StringBuilder sb = new StringBuilder();
 	private static int selectedSquaresNumber = 0;
-	private static boolean loaded = false;
+	private static long loaded = -1;
 	
 	// Hibernate stuff
 	
@@ -293,7 +295,8 @@ public class Workbench extends JPanel {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				super.mousePressed(e);
-				openGame();
+				gamesListerDialog(lang.getOpenGameText(), lang.getOpenGameText(), 
+						lang.getOpenMnemonic(), ActOnGame.LOAD);;
 			}
 		});
 
@@ -317,7 +320,12 @@ public class Workbench extends JPanel {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				super.mousePressed(e);
-				saveGame();
+				try {
+					saveGame();
+				} catch (JsonProcessingException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 
@@ -329,7 +337,8 @@ public class Workbench extends JPanel {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				super.mousePressed(e);
-				deleteGame();
+				gamesListerDialog(lang.getDeleteGameText(), lang.getDeleteText(), 
+						lang.getDeleteMnemonic(), ActOnGame.DELETE);
 			}
 		});
 
@@ -1467,14 +1476,9 @@ public class Workbench extends JPanel {
 
 	}
 
-	protected static void deleteGame() {
-		deleteGameDialog();
-	}
-
-	private static void deleteGameDialog() {
-		// TODO Auto-generated method stub
-		JPanel deleter, buttons;
-		JButton delete, cancel;
+	private static void gamesListerDialog(String windowTitle, String actionText, char actionMnemonic, ActOnGame command) {
+		JPanel lister, buttons;
+		JButton action, cancel;
 		JDialog dialog = new JDialog();
 		Dimension dim;
 		Session session = factory.openSession();
@@ -1483,8 +1487,8 @@ public class Workbench extends JPanel {
 		
 		String[] columns = {lang.getGameId(), lang.getGameName(), lang.getGameTheme(), lang.getGameSize(),
 				lang.getGameDescription(), lang.getGamePreferences(), lang.getGameImage(),
-				lang.getGameRating()};
-		Object[][] data = new Game[games.size()][columns.length];
+				lang.getGameRating(), lang.getCompleteLabelText()};
+		Object[][] data = new Object[games.size()][columns.length];
 		for (int i = 0; i < data.length; i++) {
 			data[i][0] = games.get(i).getId();
 			data[i][1] = games.get(i).getName();
@@ -1492,29 +1496,48 @@ public class Workbench extends JPanel {
 			data[i][3] = games.get(i).getSize();
 			data[i][4] = games.get(i).getDescription();
 			data[i][5] = games.get(i).getPreference().getName();
-			data[i][6] = games.get(i).getImage().getName();
+			data[i][6] = games.get(i).getImage() == null ? " " : games.get(i).getImage().getName();
 			data[i][7] = games.get(i).getRating();
 			data[i][8] = games.get(i).isComplete();
 		}
 		
 		JTable table = new JTable(data, columns);
+		DefaultTableModel tableModel = new DefaultTableModel(data, columns) {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+		table.setModel(tableModel);
 		JScrollPane tableContainer = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, 
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		
 		dim = table.getPreferredSize();
 		table.setSize(dim.width, dim.height);
 		
-		delete = new JButton(lang.getLoadButtonText());
-		delete.setMnemonic(lang.getLoadButtonMnemonic());
-		if (table.getRowCount() == 0)
-			delete.setEnabled(false);
-		else
-			delete.setEnabled(true);
-		delete.addActionListener(new ActionListener() {
+		action = new JButton(actionText);
+		action.setMnemonic(actionMnemonic);
+		action.setEnabled(false);
+		table.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent me) {
+				if (table.rowAtPoint(me.getPoint()) == -1) {
+					table.clearSelection();
+					action.setEnabled(false);
+				}
+				else
+					action.setEnabled(true);
+			}
+		});
+		action.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				deleteTheGame(games.get(table.getSelectedRow()));
+				actOnTheGame(games.get(table.getSelectedRow()), command);
 				dialog.dispose();
 			}
 		});
@@ -1530,27 +1553,35 @@ public class Workbench extends JPanel {
 		});
 		
 		buttons = new JPanel();
-		buttons.add(delete);
+		buttons.add(action);
 		buttons.add(cancel);
 		
-		deleter = new JPanel();
-		deleter.add(tableContainer);
-		deleter.add(buttons);
-		BoxLayout boxLayout = new BoxLayout(deleter, BoxLayout.Y_AXIS);
-		deleter.setLayout(boxLayout);
+		lister = new JPanel();
+		lister.add(tableContainer);
+		lister.add(buttons);
+		BoxLayout boxLayout = new BoxLayout(lister, BoxLayout.Y_AXIS);
+		lister.setLayout(boxLayout);
 		JOptionPane optionPane = new JOptionPane(null, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION,
 				null, new Object[] {}, null);
 
-		optionPane.add(deleter);
+		optionPane.add(lister);
 		dialog.setModal(true);
-		dialog.setTitle(lang.getOpenGameText());
+		dialog.setTitle(windowTitle);
 		dialog.setContentPane(optionPane);
 
 		dialog.pack();
 
 		dialog.setVisible(true);
 	}
-
+	
+	protected static void actOnTheGame(Game game, ActOnGame action) {
+		switch (action) {
+			case DELETE: deleteTheGame(game); break;
+			case LOAD: loadTheGame(game); break;
+			default: ;
+		}
+	}
+	
 	protected static void deleteTheGame(Game game) {
 		Session session = factory.openSession();
 		session.beginTransaction();
@@ -1559,13 +1590,43 @@ public class Workbench extends JPanel {
 		session.close();
 	}
 
-	protected static void saveGame() {
+	protected static void saveGame() throws JsonProcessingException {
 		// TODO Saving current game
-		if (!loaded)
+		if (loaded == -1)
 			saveGameDialog();
 		else
-			saveCurrentGame(currentGame.getName(), currentGame.getTheme(), currentGame.getDescription(), 
-					currentGame.getPreference().getName());
+			updateGame();
+	}
+
+	private static void updateGame() throws JsonProcessingException {
+		System.out.println(currentGame.getSolutionsDefinitionsJSON());
+		currentGame.serializeSolutionsDefinitions();
+		System.out.println(currentGame.getSolutionsDefinitionsJSON());
+		Session session = factory.openSession();
+		session.beginTransaction();
+		String hql = "update games set name = :name, theme = :theme, size = :size,"
+				+ "description = :description, preference = :preference, image = :image,"
+				+ "rating = :rating, complete = :complete, letters = :letters, accessTime = :accessTime,"
+				+ "solutionsDefinitionsJSON = :solutionsDefinitionsJSON"
+//				+ "solutionsDefinitions = :solutionsDefinitions"
+				+ " where id = :loaded";
+		Query<?> query = session.createQuery(hql);
+		query.setParameter("name", currentGame.getName());
+		query.setParameter("theme", currentGame.getTheme());
+		query.setParameter("size", currentGame.getSize());
+		query.setParameter("description", currentGame.getDescription());
+		query.setParameter("preference", currentGame.getPreference());
+		query.setParameter("image", currentGame.getImage());
+		query.setParameter("rating", currentGame.getRating());
+		query.setParameter("complete", currentGame.isComplete());
+		query.setParameter("letters", currentGame.getLetters());
+		query.setParameter("accessTime", currentGame.getAccessTime());
+		query.setParameter("solutionsDefinitionsJSON", currentGame.getSolutionsDefinitionsJSON());
+//		query.setParameter("solutionsDefinitions", currentGame.getSolutionsDefinitions());
+		query.setParameter("loaded", loaded);
+		query.executeUpdate();
+		transaction.commit();
+		session.close();
 	}
 
 	private static void saveGameDialog() {
@@ -1706,15 +1767,11 @@ public class Workbench extends JPanel {
 		Session session = factory.openSession();
 		session.beginTransaction();
 		
-		if (!loaded) {
-			session.save(currentGame);
-		}
-		else{
-			session.createQuery("update games").executeUpdate();
-		}
+		session.save(currentGame);
+		List<Game> games = session.createQuery("from games where accessTime = (select max(accessTime) from games)").getResultList();
 		session.getTransaction().commit();
 		session.close();
-		loaded = true;
+		loaded = games.get(0).getId();
 	}
 
 	private static void checkCompletion() {
@@ -1727,7 +1784,6 @@ public class Workbench extends JPanel {
 
 	private static void loadImage(JPanel panel) {
 		Graphics g = panel.getGraphics();
-		System.out.println(g);
 		if (currentGame.getImage() != null)
 		try {
 			g.drawImage(ImageIO.read(currentGame.getImage()), 0, 0, null);
@@ -1744,7 +1800,7 @@ public class Workbench extends JPanel {
 		if (games.size() == 0)
 			noIncompleteGameMessage();
 		else
-			loadGame(games.get(index));
+			loadTheGame(games.get(index));
 	}
 
 	private static void noIncompleteGameMessage() {
@@ -1760,7 +1816,6 @@ public class Workbench extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
 				dialog.dispose();
 			}
 		});
@@ -1787,95 +1842,12 @@ public class Workbench extends JPanel {
 		dialog.setVisible(true);
 	}
 
-	protected static void openGame() {
-		gameOpenerDialog();
-	}
-
-	private static void gameOpenerDialog() {
-		JPanel opener, buttons;
-		JButton load, cancel;
-		JDialog dialog = new JDialog();
-		Dimension dim;
-		Session session = factory.openSession();
-		List<Game> games = session.createQuery("from games").getResultList();
-		session.close();
-		
-		String[] columns = {lang.getGameId(), lang.getGameName(), lang.getGameTheme(), lang.getGameSize(),
-				lang.getGameDescription(), lang.getGamePreferences(), lang.getImageName(),
-				lang.getGameRating(), lang.getCompleteLabelText()};
-		Object[][] data = new Object[games.size()][columns.length];
-		for (int i = 0; i < data.length; i++) {
-			data[i][0] = games.get(i).getId();
-			data[i][1] = games.get(i).getName();
-			data[i][2] = games.get(i).getTheme();
-			data[i][3] = games.get(i).getSize();
-			data[i][4] = games.get(i).getDescription();
-			data[i][5] = games.get(i).getPreference().getName();
-			data[i][6] = games.get(i).getImage() == null ? "" : games.get(i).getImage().getName();
-			data[i][7] = games.get(i).getRating();
-			data[i][8] = games.get(i).isComplete();
-		}
-		
-		JTable table = new JTable(data, columns);
-		JScrollPane tableContainer = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, 
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		
-		dim = table.getPreferredSize();
-		table.setSize(dim.width, dim.height);
-		
-		load = new JButton(lang.getLoadButtonText());
-		load.setMnemonic(lang.getLoadButtonMnemonic());
-		if (table.getRowCount() == 0)
-			load.setEnabled(false);
-		else
-			load.setEnabled(true);
-		load.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				loadGame(games.get(table.getSelectedRow()));
-				dialog.dispose();
-			}
-		});
-		
-		cancel = new JButton(lang.getCancelButtonText());
-		cancel.setMnemonic(lang.getCancelButtonMnemonic());
-		cancel.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				dialog.dispose();
-			}
-		});
-		
-		buttons = new JPanel();
-		buttons.add(load);
-		buttons.add(cancel);
-		
-		opener = new JPanel();
-		opener.add(tableContainer);
-		opener.add(buttons);
-		BoxLayout boxLayout = new BoxLayout(opener, BoxLayout.Y_AXIS);
-		opener.setLayout(boxLayout);
-		JOptionPane optionPane = new JOptionPane(null, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION,
-				null, new Object[] {}, null);
-
-		optionPane.add(opener);
-		dialog.setModal(true);
-		dialog.setTitle(lang.getOpenGameText());
-		dialog.setContentPane(optionPane);
-
-		dialog.pack();
-
-		dialog.setVisible(true);
-	}
-
 	public static void newGame() {
 		currentGame = new Game();
 		actualPreference = new Preferences();
 		createSquares();
 		drawArea.repaint();
-		loaded = false;
+		loaded = -1;
 	}
 
 	private static void loadMenusText() {
@@ -2138,12 +2110,13 @@ public class Workbench extends JPanel {
 		Workbench.actualPreference = actualPreference;
 	}
 
-	public static void loadGame(Game game) {
+	public static void loadTheGame(Game game) {
 		currentGame = game;
+		loaded = currentGame.getId();
 		actualPreference = game.getPreference();
 		createSquares();
 		drawArea.repaint();
-		loaded = true;
+		loaded = game.getId();
 		Editor.getNumberField().setText("");
 		Editor.getDefinitionArea().setText("");
 		Editor.getDirectionSpinner().setValue(lang.getHorizontal());

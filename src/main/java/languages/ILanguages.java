@@ -149,10 +149,9 @@ public interface ILanguages {
 	String getCancelButtonText();
 	char getCancelButtonMnemonic();
 	String getOpenGameText();
+	String getDeleteGameText();
 	
 	String getNoIncompleteGameText();
-	String getNoIncompleteGameButtonText();
-	char getNoIncompleteGameButtonMnemonic();
 	String getContinueGameText();
 	
 	String getNameLabelText();

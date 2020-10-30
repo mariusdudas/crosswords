@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ListConverter implements AttributeConverter<List<GameCoreData>, String> {
 
+	// Converting from List type object to String
 	@Override
 	public String convertToDatabaseColumn(List<GameCoreData> solutionsDefinitions) {
 		String attributeJson = null;
@@ -20,11 +21,13 @@ public class ListConverter implements AttributeConverter<List<GameCoreData>, Str
 		return attributeJson;
 	}
 
+	// Converting from String to List type object
 	@Override
 	public List<GameCoreData> convertToEntityAttribute(String solutionsDefinitionsJson) {
 		List<GameCoreData> solutionsDefinitions = null;
+		ObjectMapper objectMapper = new ObjectMapper();
 		try {
-			solutionsDefinitions = new ObjectMapper().readValue(solutionsDefinitionsJson, List.class);
+			solutionsDefinitions = objectMapper.readValue(solutionsDefinitionsJson, List.class);
 		} catch (final JsonProcessingException e) {
 			e.printStackTrace();
 		}
