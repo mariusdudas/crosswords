@@ -323,11 +323,6 @@ public class English implements ILanguages {
 	}
 	
 	@Override
-	public String getLoadSettingsDeleteButtonText() {
-		return "Delete";
-	}
-
-	@Override
 	public String getLoadSettingsCancelButtonText() {
 		return "Cancel";
 	}
@@ -350,11 +345,6 @@ public class English implements ILanguages {
 	@Override
 	public String getNoRenameBtnText() {
 		return "No";
-	}
-
-	@Override
-	public String getDeletePreferenceText() {
-		return "Delete";
 	}
 
 	@Override
@@ -451,7 +441,7 @@ public class English implements ILanguages {
 
 	@Override
 	public String getSaveButtonText() {
-		return "Save";
+		return "Add";
 	}
 
 	@Override
@@ -480,17 +470,17 @@ public class English implements ILanguages {
 	}
 	
 	@Override
-	public String getGameName() {
+	public String getGameNameText() {
 		return "Name";
 	}
 
 	@Override
-	public String getGameTheme() {
+	public String getGameThemeText() {
 		return "Theme";
 	}
 
 	@Override
-	public String getGameDescription() {
+	public String getGameDescriptionText() {
 		return "Description";
 	}
 
@@ -557,11 +547,6 @@ public class English implements ILanguages {
 	@Override
 	public String getNameLabelText() {
 		return "Name";
-	}
-
-	@Override
-	public String getThemeLabelText() {
-		return "Theme";
 	}
 
 	@Override

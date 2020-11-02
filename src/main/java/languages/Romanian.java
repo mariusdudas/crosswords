@@ -4,7 +4,7 @@ public class Romanian implements ILanguages {
 	
 	@Override
 	public String getFileText() {
-		return "Fisier";
+		return "Fișier";
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class Romanian implements ILanguages {
 
 	@Override
 	public String getContinueText() {
-		return "Continua";
+		return "Continuă";
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class Romanian implements ILanguages {
 
 	@Override
 	public String getSaveText() {
-		return "Salveaza";
+		return "Salvează";
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class Romanian implements ILanguages {
 
 	@Override
 	public String getDeleteText() {
-		return "Sterge";
+		return "Șterge";
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class Romanian implements ILanguages {
 
 	@Override
 	public String getExitText() {
-		return "Iesire";
+		return "Ieșire";
 	}
 
 	@Override
@@ -74,7 +74,7 @@ public class Romanian implements ILanguages {
 
 	@Override
 	public String getSettingsText() {
-		return "Preferinte";
+		return "Preferințe";
 	}
 
 	@Override
@@ -94,7 +94,7 @@ public class Romanian implements ILanguages {
 
 	@Override
 	public String getSquareBackgroundText() {
-		return "Fundal patrat";
+		return "Fundal pătrat";
 	}
 
 	@Override
@@ -104,7 +104,7 @@ public class Romanian implements ILanguages {
 
 	@Override
 	public String getSquareOutlineText() {
-		return "Contur patrat";
+		return "Contur pătrat";
 	}
 
 	@Override
@@ -114,7 +114,7 @@ public class Romanian implements ILanguages {
 
 	@Override
 	public String getSelectedSquareColorText() {
-		return "Culoarea selectiei";
+		return "Culoarea selecției";
 	}
 
 	@Override
@@ -134,7 +134,7 @@ public class Romanian implements ILanguages {
 	
 	@Override
 	public String getSquareNumberColor() {
-		return "Culoarea numerelor randurilor si coloanelor";
+		return "Culoarea numerelor rândurilor și coloanelor";
 	}
 
 	@Override
@@ -144,7 +144,7 @@ public class Romanian implements ILanguages {
 
 	@Override
 	public String getBlancSquareColorText() {
-		return "Culoarea patratului blanc";
+		return "Culoarea pătratului blanc";
 	}
 
 	@Override
@@ -164,7 +164,7 @@ public class Romanian implements ILanguages {
 
 	@Override
 	public String getSizeText() {
-		return "Marime";
+		return "Mărime";
 	}
 
 	@Override
@@ -174,7 +174,7 @@ public class Romanian implements ILanguages {
 
 	@Override
 	public String getWidthInSquaresText() {
-		return "Latimea in patrate";
+		return "Lățimea în pătrate";
 	}
 
 	@Override
@@ -184,17 +184,17 @@ public class Romanian implements ILanguages {
 
 	@Override
 	public String getHeightInSquaresText() {
-		return "Inaltimea in patrate";
+		return "Înălțimea în pătrate";
 	}
 
 	@Override
 	public char getHeightInSquaresMnemonic() {
-		return 'I';
+		return 'Î';
 	}
 
 	@Override
 	public String getSaveSettingsText() {
-		return "Salvare preferinte";
+		return "Salvare preferințe";
 	}
 
 	@Override
@@ -204,7 +204,7 @@ public class Romanian implements ILanguages {
 
 	@Override
 	public String getLoadSettingsText() {
-		return "Incarcare preferinte";
+		return "Încărcare preferințe";
 	}
 
 	@Override
@@ -214,7 +214,7 @@ public class Romanian implements ILanguages {
 
 	@Override
 	public String getDeleteSettingsText() {
-		return "Stergere preferinte";
+		return "Ștergere preferințe";
 	}
 
 	@Override
@@ -244,7 +244,7 @@ public class Romanian implements ILanguages {
 
 	@Override
 	public String getLanguageItemText() {
-		return "Engleza";
+		return "Engleză";
 	}
 
 	@Override
@@ -259,12 +259,12 @@ public class Romanian implements ILanguages {
 
 	@Override
 	public String getInformationContent() {
-		return "Informatii";
+		return "Informații";
 	}
 
 	@Override
 	public String getLoadSettingsError01() {
-		return "Nu exista preferinte salvate";
+		return "Nu există preferințe salvate";
 	}
 
 	@Override
@@ -284,22 +284,22 @@ public class Romanian implements ILanguages {
 
 	@Override
 	public String getWidthText() {
-		return "Latime: ";
+		return "Lățime: ";
 	}
 
 	@Override
 	public String getHeightText() {
-		return "Inaltime: ";
+		return "Înălțime: ";
 	}
 
 	@Override
 	public String getPreferenceName() {
-		return "Numele preferintei nu poate fi nul";
+		return "Numele preferinței nu poate fi nul";
 	}
 
 	@Override
 	public String getLoadImageText() {
-		return "Incarca imagine";
+		return "Încarcă imagine";
 	}
 
 	@Override
@@ -309,7 +309,7 @@ public class Romanian implements ILanguages {
 	
 	@Override
 	public String getSavePreferencesMessage() {
-		return "Salveaza preferinta";
+		return "Salvează preferința";
 	}
 
 	@Override
@@ -322,23 +322,18 @@ public class Romanian implements ILanguages {
 	}
 
 	@Override
-	public String getLoadSettingsDeleteButtonText() {
-		return "Sterge";
-	}
-
-	@Override
 	public String getLoadSettingsCancelButtonText() {
-		return "Renunta";
+		return "Renunță";
 	}
 
 	@Override
 	public String getLoadSettingsRenameButtonText() {
-		return "Redenumeste";
+		return "Redenumește";
 	}
 
 	@Override
 	public String getLoadSettingsRenameLabelText() {
-		return "Redenumeste preferinta";
+		return "Redenumește preferința";
 	}
 
 	@Override
@@ -352,18 +347,13 @@ public class Romanian implements ILanguages {
 	}
 
 	@Override
-	public String getDeletePreferenceText() {
-		return "Sterge";
-	}
-
-	@Override
 	public String getDeletePreferenceNameText() {
-		return "Sterge preferinta selectata?";
+		return "Șterge preferința selectată?";
 	}
 
 	@Override
 	public String getSaveSettingsNameLabelText() {
-		return "Introduceti numele preferintei";
+		return "Introduceți numele preferinței";
 	}
 
 	@Override
@@ -388,29 +378,29 @@ public class Romanian implements ILanguages {
 	
 	@Override
 	public String getSaveSettingsIdenticalNameText() {
-		return "Nume deja folosit. Va rog alegeti altul";
+		return "Nume deja folosit. Vă rog alegeți altul";
 	}
 
 	public String getDefinitionLabelText() {
-		return "Definitie";
+		return "Definiție";
 	}
 
 	public String getSolutionLabelText() {
-		return "Solutie";
+		return "Soluție";
 	}
 
 	public String getAutomaticNumberingText() {
-		return "Numerotare automata";
+		return "Numerotare automată";
 	}
 
 	@Override
 	public String getNumberText() {
-		return "Numar";
+		return "Număr";
 	}
 
 	@Override
 	public String getSetBlancText() {
-		return "Fa blanc";
+		return "Fă blanc";
 	}
 	
 	@Override
@@ -420,7 +410,7 @@ public class Romanian implements ILanguages {
 
 	@Override
 	public String getSetNonBlancText() {
-		return "Fa non-blanc";
+		return "Fă non-blanc";
 	}
 
 	@Override
@@ -430,7 +420,7 @@ public class Romanian implements ILanguages {
 	
 	@Override
 	public String getMultipleSelectionText() {
-		return "Selectie multipla";
+		return "Selecție multiplă";
 	}
 
 	@Override
@@ -440,7 +430,7 @@ public class Romanian implements ILanguages {
 
 	@Override
 	public String getStopMultipleSelectionText() {
-		return "Opreste selectia multipla";
+		return "Oprește selecția multiplă";
 	}
 
 	@Override
@@ -450,7 +440,7 @@ public class Romanian implements ILanguages {
 
 	@Override
 	public String getSaveButtonText() {
-		return "Salveaza";
+		return "Adaugă";
 	}
 
 	@Override
@@ -470,7 +460,7 @@ public class Romanian implements ILanguages {
 
 	@Override
 	public String getDirectionText() {
-		return "Directie";
+		return "Direcție";
 	}
 
 	@Override
@@ -479,23 +469,23 @@ public class Romanian implements ILanguages {
 	}
 	
 	@Override
-	public String getGameName() {
+	public String getGameNameText() {
 		return "Nume";
 	}
 
 	@Override
-	public String getGameTheme() {
-		return "Tema";
+	public String getGameThemeText() {
+		return "Temă";
 	}
 
 	@Override
-	public String getGameDescription() {
+	public String getGameDescriptionText() {
 		return "Descriere";
 	}
 
 	@Override
 	public String getGameSize() {
-		return "Marime";
+		return "Mărime";
 	}
 
 	@Override
@@ -505,7 +495,7 @@ public class Romanian implements ILanguages {
 
 	@Override
 	public String getGamePreferences() {
-		return "Preferinte";
+		return "Preferințe";
 	}
 
 	@Override
@@ -515,17 +505,17 @@ public class Romanian implements ILanguages {
 
 	@Override
 	public String getLoadButtonText() {
-		return "Incarca";
+		return "Încarcă";
 	}
 
 	@Override
 	public char getLoadButtonMnemonic() {
-		return 'I';
+		return 'Î';
 	}
 
 	@Override
 	public String getCancelButtonText() {
-		return "Renunta";
+		return "Renunță";
 	}
 
 	@Override
@@ -539,17 +529,17 @@ public class Romanian implements ILanguages {
 	}
 	
 	public String getDeleteGameText() {
-		return "Sterge joc";
+		return "Șterge joc";
 	}
 
 	@Override
 	public String getNoIncompleteGameText() {
-		return "Nu s-au gasit jocuri incomplete";
+		return "Nu s-au găsit jocuri incomplete";
 	}
 
 	@Override
 	public String getContinueGameText() {
-		return "Continua ultimul joc neterminat";
+		return "Continuă ultimul joc neterminat";
 	}
 
 	@Override
@@ -558,13 +548,8 @@ public class Romanian implements ILanguages {
 	}
 
 	@Override
-	public String getThemeLabelText() {
-		return "Tema";
-	}
-
-	@Override
 	public String getSizeLabelText() {
-		return "Marime";
+		return "Mărime";
 	}
 
 	@Override
@@ -574,7 +559,7 @@ public class Romanian implements ILanguages {
 
 	@Override
 	public String getPreferenceLabelText() {
-		return "Preferinta";
+		return "Preferință";
 	}
 
 	@Override

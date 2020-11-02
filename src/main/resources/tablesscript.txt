@@ -1,0 +1,22 @@
+use crosswords;
+CREATE TABLE if NOT EXISTS games(
+	gameId BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, 
+	name VARCHAR(30) NOT NULL, 
+	theme VARCHAR(30) NOT NULL, 
+	size VARCHAR(5),
+	description VARCHAR(150) NOT NULL, 
+	preference BLOB,
+	image BLOB, 
+	rating VARCHAR(1),
+	complete BOOL,
+	letters BLOB, 
+	accessTime TIMESTAMP
+);
+CREATE TABLE if NOT EXISTS gameCoreData(
+	coreId BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	number INT NOT NULL, 
+	direction VARCHAR(30) NOT NULL, 
+	solutionLength INT,
+	definition VARCHAR(150) NOT NULL,
+	gameId BIGINT
+);

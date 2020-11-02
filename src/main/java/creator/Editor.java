@@ -60,6 +60,7 @@ public class Editor extends JPanel {
 
 		scrollableTextArea.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		definitionArea.setLineWrap(true);
+		definitionArea.setText("");
 
 		solutionField.setColumns(30);
 

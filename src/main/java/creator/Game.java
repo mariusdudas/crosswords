@@ -5,24 +5,21 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Transient;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 
 @Entity(name = "games")
-@Access(AccessType.FIELD)
+//@Access(AccessType.FIELD)
 public class Game {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long gameId;
-
 	private String name;
 	private String theme;
 	private String size;
@@ -37,29 +34,20 @@ public class Game {
 	// Not showing these
 	private char[] letters;
 	private Timestamp accessTime;
-	private String solutionsDefinitionsJson;
-	@Transient
-//	@Convert(converter = ListConverter.class)
+	
+	@OneToMany(cascade = CascadeType.ALL, targetEntity = GameCoreData.class, 
+			orphanRemoval = true, fetch = FetchType.EAGER)
+	@JoinColumn(name = "gameId")
 	private List<GameCoreData> solutionsDefinitions = new ArrayList<GameCoreData>();
 	
-	public void serializeSolutionsDefinitions() throws JsonProcessingException {
-	    this.solutionsDefinitionsJson = new ObjectMapper().writeValueAsString(solutionsDefinitions);
-	}
-	
-	public void deserializeSolutionsDefinitions() throws JsonProcessingException {
-		this.solutionsDefinitions = new ObjectMapper().readValue(solutionsDefinitionsJson, List.class);
-	}
-
-	public Long getId() {
-		return gameId;
-	}
-
 	public Preferences getPreference() {
 		return preference;
 	}
 	
 	public void setPreferenceName(String name) {
-		this.preference.setName(name);
+		if (preference == null)
+			return;
+		this.preference.setName(name == null ? "" : name);
 	}
 
 	public Rating getRating() {
@@ -72,11 +60,12 @@ public class Game {
 
 	public String getSolution(int index) {
 		char[] chars = new char[((GameCoreData) solutionsDefinitions.toArray()[index]).getSolutionLength()];
+		GameCoreData data = solutionsDefinitions.get(index);
 		for (int i = 0; i < chars.length; i++) {
-			chars[i] = ((GameCoreData)solutionsDefinitions.toArray()[index]).getDirection().equals(Workbench.getLang().getHorizontal())
-					? Workbench.getSquares()[((GameCoreData)solutionsDefinitions.toArray()[i]).getNumber() + i].getLetter()
-					: Workbench.getSquares()[((GameCoreData)solutionsDefinitions.toArray()[i]).getNumber() + preference.getWidth() * i]
-							.getLetter();
+			chars[i] = data.getDirection().equals(Workbench.getLang().getHorizontal())
+					? Workbench.getSquares()[data.getNumber() + i].getLetter()
+					: Workbench.getSquares()[data.getNumber() + preference.getWidth() * i]
+					.getLetter();
 		}
 		return String.valueOf(chars);
 	}
@@ -151,10 +140,6 @@ public class Game {
 		return letters;
 	}
 	
-	public String getSolutionsDefinitionsJSON() {
-		return solutionsDefinitionsJson;
-	}
-
 	public Timestamp getAccessTime() {
 		return accessTime;
 	}
@@ -162,6 +147,16 @@ public class Game {
 	public void setAccessTime(Timestamp accessTime) {
 		this.accessTime = accessTime;
 	}
+
+	public Long getGameId() {
+		return gameId;
+	}
+
+	public void setGameId(Long gameId) {
+		this.gameId = gameId;
+	}
+	
+	
 	
 //	public JsonString getJSONsolutionsDefinitions() {
 //		return JSONsolutionsDefinitions;

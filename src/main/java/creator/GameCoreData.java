@@ -4,18 +4,17 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
-@Entity
-@Table(name = "solutionsDefinitions")
+@Entity(name = "gameCoreData")
 public class GameCoreData {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Long coreId;
 	private int number;				// The number of the square in squares variable
 	private String direction;		// The direction of the word
 	private int solutionLength;		// The length of the word written in squares
 	private String definition;		// The explanation of the solutionLength field
+	private Long gameId;
 	
 	public String getSolution() {
 		char[] chars = new char[solutionLength];
@@ -53,10 +52,27 @@ public class GameCoreData {
 		this.definition = definition;
 	}
 
+	public Long getCoreId() {
+		return coreId;
+	}
+
+	public void setCoreId(Long coreId) {
+		this.coreId = coreId;
+	}
+	
+	public Long getGameId() {
+		return gameId;
+	}
+
+
+	public void setGameId(Long gameId) {
+		this.gameId = gameId;
+	}
+
 
 	@Override
 	public String toString() {
-		return "GameCoreData [id=" + id + ", number=" + number + ", direction=" + direction + ", solutionLength="
+		return "GameCoreData [id=" + coreId + ", number=" + number + ", direction=" + direction + ", solutionLength="
 				+ solutionLength + ", definition=" + definition + "]";
 	}
 	

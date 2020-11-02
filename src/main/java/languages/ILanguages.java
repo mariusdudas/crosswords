@@ -76,13 +76,11 @@ public interface ILanguages {
 	
 	String getOKButtonText();
 	char getOKButtonMnemonic();
-	String getLoadSettingsDeleteButtonText();
 	String getLoadSettingsCancelButtonText();
 	String getLoadSettingsRenameButtonText();
 	String getLoadSettingsRenameLabelText();
 	String getYesRenameBtnText();
 	String getNoRenameBtnText();
-	String getDeletePreferenceText();
 	String getDeletePreferenceNameText();
 	
 	/*
@@ -137,9 +135,9 @@ public interface ILanguages {
 	 */
 	
 	String getGameId();
-	String getGameName();
-	String getGameTheme();
-	String getGameDescription();
+	String getGameNameText();
+	String getGameThemeText();
+	String getGameDescriptionText();
 	String getGameSize();
 	String getGameImage();
 	String getGamePreferences();
@@ -155,7 +153,6 @@ public interface ILanguages {
 	String getContinueGameText();
 	
 	String getNameLabelText();
-	String getThemeLabelText();
 	String getSizeLabelText();
 	String getDescriptionLabelText();
 	String getPreferenceLabelText();

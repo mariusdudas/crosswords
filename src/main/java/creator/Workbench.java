@@ -34,6 +34,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.persistence.NoResultException;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -71,10 +72,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-//import org.json.simple.*;
 import org.hibernate.query.Query;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import languages.English;
 import languages.ILanguages;
@@ -320,12 +318,7 @@ public class Workbench extends JPanel {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				super.mousePressed(e);
-				try {
-					saveGame();
-				} catch (JsonProcessingException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				saveGameDialog();
 			}
 		});
 
@@ -619,14 +612,6 @@ public class Workbench extends JPanel {
 		});
 	}
 	
-	private static Session getCurrentSession() {
-		Configuration config = new Configuration();
-		config.configure();
-		factory = config.buildSessionFactory();
-		Session session = factory.openSession();
-		return session;
-	}
-
 	public static void chooseImage() {
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.addChoosableFileFilter(new FileFilter() {
@@ -771,7 +756,7 @@ public class Workbench extends JPanel {
 		GameCoreData newStage = new GameCoreData();
 		JLabel valueSetLabel = new JLabel();
 		labelsContainer.add(valueSetLabel);
-		labelsContainer.revalidate();
+		
 		
 		Editor.getSolutionField().setText(
 				Editor.getSolutionField().getText().substring(0, selectedSquaresNumber + 1));
@@ -822,7 +807,10 @@ public class Workbench extends JPanel {
 		// Fills the labelsContainer with labels with saved values
 		// Each value set is printed on a separate label
 		labelsContainer.removeAll();
+		labelsContainer.revalidate();
+		labelsContainer.repaint();
 		for (int i = 0; i < currentGame.getSolutionsDefinitions().size(); i++) {
+		// tested until here
 			addLabel((currentGame.getSolutionsDefinitions().get(i)));
 		}
 		saveButton.setEnabled(true);
@@ -863,7 +851,6 @@ public class Workbench extends JPanel {
 		values.setHorizontalTextPosition((int) CENTER_ALIGNMENT);
 		values.setText(sb.toString());
 		labelsContainer.add(values);
-		labelsContainer.revalidate();
 	}
 
 	protected static void redirectToWorkbench(int i) {
@@ -1030,7 +1017,9 @@ public class Workbench extends JPanel {
 				squares[j * actualPreference.getWidth() + i] = new Square(x + i * side, y + j * side, false, (char) 0);
 			}
 		}
-		currentGame.initGame(squares.length);
+		// TODO initGame imi distruge practic obiectul currentGame incarcat din baza de date
+		if (loaded == -1)
+			currentGame.initGame(squares.length);
 		drawArea.repaint();
 	}
 
@@ -1105,7 +1094,7 @@ public class Workbench extends JPanel {
 			}
 		});
 
-		deleteBtn = new JButton(lang.getLoadSettingsDeleteButtonText());
+		deleteBtn = new JButton(lang.getDeleteText());
 		renameBtn = new JButton(lang.getLoadSettingsRenameButtonText());
 		if (preferencesBox.getSelectedItem() == null) {
 			deleteBtn.setEnabled(false);
@@ -1117,7 +1106,7 @@ public class Workbench extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if (JOptionPane.showConfirmDialog(null, lang.getDeletePreferenceNameText(),
-						lang.getDeletePreferenceText(), JOptionPane.YES_NO_OPTION) == 0) {
+						lang.getDeleteText(), JOptionPane.YES_NO_OPTION) == 0) {
 					if (preferencesBox.getItemCount() > 0)
 						try {
 							deleteSettings(preferencesBox.getSelectedIndex());
@@ -1485,12 +1474,12 @@ public class Workbench extends JPanel {
 		List<Game> games = session.createQuery("from games").getResultList();
 		session.close();
 		
-		String[] columns = {lang.getGameId(), lang.getGameName(), lang.getGameTheme(), lang.getGameSize(),
-				lang.getGameDescription(), lang.getGamePreferences(), lang.getGameImage(),
+		String[] columns = {lang.getGameId(), lang.getGameNameText(), lang.getGameThemeText(), lang.getGameSize(),
+				lang.getGameDescriptionText(), lang.getGamePreferences(), lang.getGameImage(),
 				lang.getGameRating(), lang.getCompleteLabelText()};
 		Object[][] data = new Object[games.size()][columns.length];
 		for (int i = 0; i < data.length; i++) {
-			data[i][0] = games.get(i).getId();
+//			data[i][0] = games.get(i).getGameId();
 			data[i][1] = games.get(i).getName();
 			data[i][2] = games.get(i).getTheme();
 			data[i][3] = games.get(i).getSize();
@@ -1590,45 +1579,6 @@ public class Workbench extends JPanel {
 		session.close();
 	}
 
-	protected static void saveGame() throws JsonProcessingException {
-		// TODO Saving current game
-		if (loaded == -1)
-			saveGameDialog();
-		else
-			updateGame();
-	}
-
-	private static void updateGame() throws JsonProcessingException {
-		System.out.println(currentGame.getSolutionsDefinitionsJSON());
-		currentGame.serializeSolutionsDefinitions();
-		System.out.println(currentGame.getSolutionsDefinitionsJSON());
-		Session session = factory.openSession();
-		session.beginTransaction();
-		String hql = "update games set name = :name, theme = :theme, size = :size,"
-				+ "description = :description, preference = :preference, image = :image,"
-				+ "rating = :rating, complete = :complete, letters = :letters, accessTime = :accessTime,"
-				+ "solutionsDefinitionsJSON = :solutionsDefinitionsJSON"
-//				+ "solutionsDefinitions = :solutionsDefinitions"
-				+ " where id = :loaded";
-		Query<?> query = session.createQuery(hql);
-		query.setParameter("name", currentGame.getName());
-		query.setParameter("theme", currentGame.getTheme());
-		query.setParameter("size", currentGame.getSize());
-		query.setParameter("description", currentGame.getDescription());
-		query.setParameter("preference", currentGame.getPreference());
-		query.setParameter("image", currentGame.getImage());
-		query.setParameter("rating", currentGame.getRating());
-		query.setParameter("complete", currentGame.isComplete());
-		query.setParameter("letters", currentGame.getLetters());
-		query.setParameter("accessTime", currentGame.getAccessTime());
-		query.setParameter("solutionsDefinitionsJSON", currentGame.getSolutionsDefinitionsJSON());
-//		query.setParameter("solutionsDefinitions", currentGame.getSolutionsDefinitions());
-		query.setParameter("loaded", loaded);
-		query.executeUpdate();
-		transaction.commit();
-		session.close();
-	}
-
 	private static void saveGameDialog() {
 		JPanel gameSaver, saveContainer, namePanel, themePanel, sizePanel, descriptionPanel, preferencePanel,
 				imagePanel, completePanel, buttonsPanel;
@@ -1643,12 +1593,14 @@ public class Workbench extends JPanel {
 
 		nameLabel = new JLabel(lang.getNameLabelText());
 		nameField = new JTextField(15);
+		nameField.setText(currentGame.getName());
 		namePanel = new JPanel();
 		namePanel.add(nameLabel);
 		namePanel.add(nameField);
 		
-		themeLabel = new JLabel(lang.getThemeLabelText());
+		themeLabel = new JLabel(lang.getGameThemeText());
 		themeField = new JTextField(15);
+		themeField.setText(currentGame.getTheme());
 		themePanel = new JPanel();
 		themePanel.add(themeLabel);
 		themePanel.add(themeField);
@@ -1664,6 +1616,7 @@ public class Workbench extends JPanel {
 		descriptionLabel = new JLabel(lang.getDescriptionLabelText());
 		descriptionArea = new JTextArea(3, 30);
 		descriptionArea.setLineWrap(true);
+		descriptionArea.setText(currentGame.getDescription());
 		descriptionScroller = new JScrollPane(descriptionArea);
 		descriptionScroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		descriptionPanel = new JPanel();
@@ -1671,7 +1624,8 @@ public class Workbench extends JPanel {
 		descriptionPanel.add(descriptionScroller);
 		
 		preferenceLabel = new JLabel(lang.getPreferenceLabelText());
-		preferenceField = new JTextField(10);
+		preferenceField = new JTextField(15);
+		preferenceField.setText(currentGame.getPreference().getName());
 		preferencePanel = new JPanel();
 		preferencePanel.add(preferenceLabel);
 		preferencePanel.add(preferenceField);
@@ -1699,10 +1653,10 @@ public class Workbench extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				saveCurrentGame(nameField.getText(), themeField.getText(), descriptionArea.getText(), 
-						preferenceField.getText().trim().isEmpty()
-						? actualPreference.getName()
-						: preferenceField.getText());
+				saveCurrentGame(nameField.getText(), themeField.getText(), descriptionArea.getText(),
+					preferenceField.getText().trim().isEmpty() 
+					? actualPreference.getName()
+					: preferenceField.getText());
 				dialog.dispose();
 			}
 		});
@@ -1766,12 +1720,11 @@ public class Workbench extends JPanel {
 		currentGame.setAccessTime(new Timestamp(System.currentTimeMillis()));
 		Session session = factory.openSession();
 		session.beginTransaction();
-		
-		session.save(currentGame);
+		session.saveOrUpdate(currentGame);
 		List<Game> games = session.createQuery("from games where accessTime = (select max(accessTime) from games)").getResultList();
 		session.getTransaction().commit();
 		session.close();
-		loaded = games.get(0).getId();
+//		loaded = games.get(0).getGameId();
 	}
 
 	private static void checkCompletion() {
@@ -1795,12 +1748,12 @@ public class Workbench extends JPanel {
 	protected static void continueGame() {
 		// TODO Continuing the last unfinished game
 		Session session = factory.openSession();
-		List<Game> games = session.createQuery("from games").getResultList();
-		int index = session.createQuery("from games where accessTime = (select max(accessTime) from games) and complete = false").getFirstResult();
+		List<Game> games = (List<Game>) session.createQuery("from games where accessTime = (select max(accessTime) from games) and complete = false").getResultList();
 		if (games.size() == 0)
 			noIncompleteGameMessage();
-		else
-			loadTheGame(games.get(index));
+		else 
+			loadTheGame(games.get(0));
+		session.close();
 	}
 
 	private static void noIncompleteGameMessage() {
@@ -1845,7 +1798,13 @@ public class Workbench extends JPanel {
 	public static void newGame() {
 		currentGame = new Game();
 		actualPreference = new Preferences();
+		selectedSquare = -1;
 		createSquares();
+		populateScrollPane();
+		Editor.getNumberField().setText("");
+		Editor.getDirectionSpinner().setValue(lang.getHorizontal());
+		Editor.getSolutionField().setText("");
+		Editor.getDefinitionArea().setText("");
 		drawArea.repaint();
 		loaded = -1;
 	}
@@ -2112,16 +2071,40 @@ public class Workbench extends JPanel {
 
 	public static void loadTheGame(Game game) {
 		currentGame = game;
-		loaded = currentGame.getId();
-		actualPreference = game.getPreference();
+		loaded = currentGame.getGameId();
+		actualPreference = currentGame.getPreference();
 		createSquares();
+		
+		for (int i = 0; i < currentGame.getLetters().length; i++) {
+			if (currentGame.getLetters()[i] == ' ' ) {
+				squares[i].setLetter((char) 0);
+				squares[i].setBlanc(true);
+			} else
+			squares[i].setLetter(currentGame.getLetters()[i]);
+		}
+		copyLetters();
 		drawArea.repaint();
-		loaded = game.getId();
-		Editor.getNumberField().setText("");
-		Editor.getDefinitionArea().setText("");
-		Editor.getDirectionSpinner().setValue(lang.getHorizontal());
-		Editor.getSolutionField().setText("");
+		loaded = game.getGameId();
 		populateScrollPane();
+		if (currentGame.getSolutionsDefinitions().size() == 0)
+			return;
+		GameCoreData data = currentGame.getSolutionsDefinitions().get(0);
+		Editor.getNumberField().setText(String.valueOf(
+				data.getDirection().equals(lang.getHorizontal())
+				? data.getNumber() % actualPreference.getWidth() + 1
+				: data.getNumber() / actualPreference.getWidth() + 1));
+		Editor.getDefinitionArea().setText(data.getDefinition());
+		Editor.getDirectionSpinner().setValue(lang.getHorizontal());
+		Editor.getSolutionField().setText(currentGame.getSolution(0));
 	}
-	
+
+	private static void copyLetters() {
+		for (int i = 0; i < currentGame.getLetters().length; i++) {
+			if (currentGame.getLetters()[i] == ' ') {
+				squares[i].setLetter((char)0);
+				squares[i].isBlanc();
+			} else
+				squares[i].setLetter(currentGame.getLetters()[i]);
+		}
+	}
 }
